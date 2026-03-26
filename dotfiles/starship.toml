@@ -1,0 +1,38 @@
+add_newline = false
+
+format = """
+$username@$hostname $directory $git_branch $git_status $golang $nodejs $python $kubernetes $time
+$character
+"""
+
+[directory]
+truncate_to_repo = true
+style = "bold cyan"
+
+[git_branch]
+symbol = "🌱 "
+style = "bold purple"
+
+[git_status]
+style = "bold red"
+
+[golang]
+symbol = "🐹 "
+
+[nodejs]
+symbol = "⬢ "
+
+[python]
+symbol = "🐍 "
+
+[kubernetes]
+symbol = "☸️ "
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "🕒 [$time]($style)"
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[✗](bold red)"
