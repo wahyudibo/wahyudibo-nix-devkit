@@ -45,10 +45,6 @@
       # ── starship
       eval "$(starship init zsh)"
 
-      # ── keybindings
-      bindkey '^[[A' history-substring-search-up
-      bindkey '^[[B' history-substring-search-down
-
       # ── tmux autostart
       if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ]; then
         exec tmux
@@ -102,7 +98,7 @@
     git curl wget
 
     # CLI Tools
-    fzf ripgrep fd bat eza zoxide
+    fzf ripgrep fd bat eza zoxide atuin
 
     # Infra
     kubectl kubectx k9s terraform
@@ -155,6 +151,12 @@
     ];
   };
   xdg.configFile."nvim".source = ./../dotfiles/nvim;
+
+  programs.atuin = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+  xdg.configFile."autin".source = ./../dotfiles/atuin.toml;
 
   home.stateVersion = "23.11";
 }
