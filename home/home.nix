@@ -27,6 +27,8 @@
       cat = "bat";
       grep = "rg";
       find = "fd";
+      c = "code .";
+      e = "explorer.exe .";
     };
 
     initContent = ''
@@ -45,6 +47,7 @@
       eval "$(starship init zsh)"
 
       # ── fzf
+      export FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border --style=full --preview=fzf-preview.sh\ {} --bind=focus:transform-header:file\ --brief\ {}"
       export FZF_TMUX_OPTS="-p 80%,60%"
 
       # ── tmux autostart
@@ -104,13 +107,13 @@
     git curl wget
 
     # CLI Tools
-    fzf ripgrep fd bat eza zoxide atuin
+    fzf ripgrep fd bat eza zoxide atuin direnv
 
     # Infra
     kubectl kubectx k9s terraform
 
     # Editors & terminal
-    starship tmux
+    starship tmux just
 
     # Container tools
     docker docker-compose
@@ -124,18 +127,7 @@
     enable = true;
     enableZshIntegration = true;
 
-    tmux = {
-      enableShellIntegration = true;
-    };
-
-    defaultOptions = [
-      "--height=80%"
-      "--layout=reverse"
-      "--border"
-      "--style=full"
-      "--preview=fzf-preview.sh {}"
-      "--bind=focus:transform-header:file --brief {}"
-    ];
+    tmux.enableShellIntegration = true;
   };
 
   home.file.".local/bin/fzf-preview.sh" = {
@@ -164,12 +156,15 @@
       require("core.plugins")
     '';
 
+    withPython3 = false;
+    withRuby = false;
+
     # Essential runtime deps
     extraPackages = with pkgs; [
       # LSP
       gopls
       terraform-ls
-      nodePackages.yaml-language-server
+      yaml-language-server
       lua-language-server
 
       # Treesitter deps
@@ -197,6 +192,11 @@
   xdg.configFile."atuin/config.toml" = {
     source = ./../dotfiles/atuin.toml;
     force = true;
+  };
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
   };
 
   home.stateVersion = "23.11";
