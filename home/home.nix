@@ -16,8 +16,8 @@
 
     history = {
       size = 10000;
+      save = 10000;
       path = "${config.home.homeDirectory}/.zsh_history";
-      share = true;
     };
 
     shellAliases = {
@@ -30,25 +30,31 @@
     };
 
     initContent = ''
+      export PATH="$HOME/.local/bin:$PATH"
+
       # ── mise
       export PATH="$HOME/.mise/bin:$PATH"
       if command -v mise >/dev/null 2>&1; then
-        eval "$(mise hook zsh)"
+        eval "$(mise activate zsh)"
       fi
 
       # ── zoxide
       eval "$(zoxide init zsh)"
 
-      # ── fzf
-      export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border"
-
       # ── starship
       eval "$(starship init zsh)"
+
+      # ── fzf
+      export FZF_TMUX_OPTS="-p 80%,60%"
 
       # ── tmux autostart
       if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ]; then
         exec tmux
       fi
+
+      # ── zsh-autosuggestion
+      export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#6c7086"
+      export ZSH_AUTOSUGGEST_USE_ASYNC=true
     '';
   };
 
@@ -113,6 +119,38 @@
     mise
   ];
 
+  # ── FZF
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+
+    tmux = {
+      enableShellIntegration = true;
+    };
+
+    defaultOptions = [
+      "--height=80%"
+      "--layout=reverse"
+      "--border"
+      "--style=full"
+      "--preview=fzf-preview.sh {}"
+      "--bind=focus:transform-header:file --brief {}"
+    ];
+  };
+
+  home.file.".local/bin/fzf-preview.sh" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+
+      if [ -d "$1" ]; then
+        eza --tree --color=always "$1"
+      else
+        bat --style=numbers --color=always "$1"
+      fi
+    '';
+  };
+
   # ── Neovim minimal setup
   programs.neovim = {
     enable = true;
@@ -156,7 +194,10 @@
     enable = true;
     enableZshIntegration = true;
   };
-  xdg.configFile."autin".source = ./../dotfiles/atuin.toml;
+  xdg.configFile."atuin/config.toml" = {
+    source = ./../dotfiles/atuin.toml;
+    force = true;
+  };
 
   home.stateVersion = "23.11";
 }
