@@ -10,8 +10,8 @@
   programs.zsh = {
     enable = true;
 
-    enableCompletion = true;
-    autosuggestion.enable = true;
+    enableCompletion = false;
+    autosuggestion.enable = false;
     syntaxHighlighting.enable = true;
 
     history = {
@@ -43,21 +43,22 @@
       # ── zoxide
       eval "$(zoxide init zsh)"
 
+      # ── fzf
+      export FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border --style=full --preview='fzf-preview.sh {}'"
+      export FZF_TMUX_OPTS="-p 80%,60%"
+
       # ── starship
       eval "$(starship init zsh)"
 
-      # ── fzf
-      export FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border --style=full --preview=fzf-preview.sh\ {} --bind=focus:transform-header:file\ --brief\ {}"
-      export FZF_TMUX_OPTS="-p 80%,60%"
-
       # ── tmux autostart
-      if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ]; then
-        exec tmux
+      if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ -n "$PS1" ]; then
+        tmux attach-session -t main || tmux new-session -s main
       fi
 
       # ── zsh-autosuggestion
       export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#6c7086"
-      export ZSH_AUTOSUGGEST_USE_ASYNC=true
+      export ZSH_AUTOSUGGEST_STRATEGY=(history)
+      export ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
     '';
   };
 
@@ -68,15 +69,16 @@
   # ── TMUX
   programs.tmux = {
     enable = true;
-    extraConfig = ''
-      set -g mouse on
-      set -g prefix C-a
-      unbind C-b
-      bind C-a send-prefix
 
-      bind | split-window -h
-      bind - split-window -v
-    '';
+    # Use external config file
+    extraConfig = builtins.readFile ./../dotfiles/tmux/tmux.conf;
+
+    # Nix-managed plugins (no TPM)
+    plugins = with pkgs.tmuxPlugins; [
+      resurrect
+      continuum
+      yank
+    ];
   };
 
   # ── Git
@@ -120,6 +122,9 @@
 
     # mise for managing Node/Python/Ruby/Go
     mise
+
+    # Dev tools
+    pre-commit
   ];
 
   # ── FZF

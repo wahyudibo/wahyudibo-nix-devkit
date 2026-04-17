@@ -133,7 +133,7 @@ just rebuild    # full rebuild
 ├── flake.nix
 ├── home/
 │   └── home.nix
-├── dotfiles/
+├── config/
 │   ├── nvim/
 │   ├── starship.toml
 │   ├── atuin.toml
