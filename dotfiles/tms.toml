@@ -1,0 +1,7 @@
+search_paths = [
+  "/home/wahyudibo/workspace" 
+]
+exclude_dirs = [".git", "node_modules", "target", "vendor"]
+display_full_path = false
+search_submodules = false
+default_session = "main"

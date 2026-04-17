@@ -11,7 +11,7 @@
     enable = true;
 
     enableCompletion = true;
-    autosuggestion.enable = true;
+    autosuggestion.enable = false;
     syntaxHighlighting.enable = true;
 
     history = {
@@ -46,18 +46,26 @@
       # ── starship
       eval "$(starship init zsh)"
 
-      # ── fzf
-      export FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border --style=full --preview=fzf-preview.sh\ {} --bind=focus:transform-header:file\ --brief\ {}"
-      export FZF_TMUX_OPTS="-p 80%,60%"
-
       # ── tmux autostart
-      if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ]; then
-        exec tmux
+      if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ -n "$PS1" ]; then
+        tmux attach-session -t main || tmux new-session -s main
       fi
 
-      # ── zsh-autosuggestion
-      export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#6c7086"
-      export ZSH_AUTOSUGGEST_USE_ASYNC=true
+      # ── tmux-sessionizer (tms)
+      export TMS_CONFIG_FILE="$HOME/.config/tms/config.toml"
+
+      # ── fzf
+      export FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border --style=full --preview='fzf-preview.sh {}'"
+      export FZF_TMUX_OPTS="-p 80%,60%"
+
+      # ── fzf-tab
+      source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+
+      # Optional: Disable default preview for fzf-tab to keep it light
+      zstyle ':fzf-tab:*' fzf-command fzf
+
+      zstyle ':fzf-tab:*' switch-group '<' '>'
+      zstyle ':fzf-tab:*' fzf-flags --preview-window=hidden:wrap
     '';
   };
 
@@ -68,16 +76,20 @@
   # ── TMUX
   programs.tmux = {
     enable = true;
-    extraConfig = ''
-      set -g mouse on
-      set -g prefix C-a
-      unbind C-b
-      bind C-a send-prefix
 
-      bind | split-window -h
-      bind - split-window -v
-    '';
+    # Use external config file
+    extraConfig = builtins.readFile ./../dotfiles/tmux/tmux.conf;
+
+    # Nix-managed plugins (no TPM)
+    plugins = with pkgs.tmuxPlugins; [
+      resurrect
+      continuum
+      yank
+    ];
   };
+
+  # ── TMS - TMUX sessionizer
+  xdg.configFile."tms/config.toml".source = ./../dotfiles/tms.toml;
 
   # ── Git
   programs.git = {
@@ -113,13 +125,16 @@
     kubectl kubectx k9s terraform
 
     # Editors & terminal
-    starship tmux just
+    zsh-fzf-tab zsh-completions starship tmux tmux-sessionizer just 
 
     # Container tools
     docker docker-compose
 
     # mise for managing Node/Python/Ruby/Go
     mise
+
+    # Dev tools
+    pre-commit
   ];
 
   # ── FZF
