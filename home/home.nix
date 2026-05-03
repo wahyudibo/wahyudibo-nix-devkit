@@ -90,16 +90,19 @@
   # ── TMS - TMUX sessionizer
   xdg.configFile."tms/config.toml".source = ./../dotfiles/tms.toml;
 
+  # -- Mise
+  xdg.configFile."mise/config.toml".source = ./../dotfiles/mise.toml;
+
   # ── Git
   programs.git = {
     enable = true;
     userName = "wahyudibo";
     userEmail = "wahyudi.ibo.wibowo@gmail.com";
-    
+
     extraConfig = {
       gpg.format = "openpgp";
     };
-  };  
+  };
 
   # ── SSH
   programs.ssh = {
@@ -124,16 +127,27 @@
     kubectl kubectx k9s terraform
 
     # Editors & terminal
-    zsh-fzf-tab zsh-completions starship tmux tmux-sessionizer just 
+    zsh-fzf-tab zsh-completions starship tmux tmux-sessionizer just
 
     # Container tools
     docker docker-compose
 
-    # mise for managing Node/Python/Ruby/Go
-    mise
+    # tools for development
+    mise pre-commit
 
-    # Dev tools
-    pre-commit
+    # go
+    go
+    gopls
+    golangci-lint
+    gotools
+
+    # js
+    biome
+
+    # rust
+    rust-analyzer
+    clippy
+    rustfmt
   ];
 
   # ── FZF
