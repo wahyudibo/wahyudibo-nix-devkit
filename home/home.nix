@@ -11,7 +11,6 @@
     enable = true;
 
     enableCompletion = true;
-    autosuggestion.enable = false;
     syntaxHighlighting.enable = true;
 
     history = {
@@ -31,7 +30,7 @@
       e = "explorer.exe .";
     };
 
-    initContent = ''
+    initExtra = ''
       export PATH="$HOME/.local/bin:$PATH"
 
       # ── mise
@@ -43,9 +42,6 @@
       # ── zoxide
       eval "$(zoxide init zsh)"
 
-      # ── starship
-      eval "$(starship init zsh)"
-
       # ── tmux autostart
       if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ -n "$PS1" ]; then
         tmux attach-session -t main || tmux new-session -s main
@@ -55,7 +51,7 @@
       export TMS_CONFIG_FILE="$HOME/.config/tms/config.toml"
 
       # ── fzf
-      export FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border --style=full --preview='fzf-preview.sh {}'"
+      export FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border --preview='fzf-preview.sh {}'"
       export FZF_TMUX_OPTS="-p 80%,60%"
 
       # ── fzf-tab
@@ -66,6 +62,9 @@
 
       zstyle ':fzf-tab:*' switch-group '<' '>'
       zstyle ':fzf-tab:*' fzf-flags --preview-window=hidden:wrap
+
+      # ── starship
+      eval "$(starship init zsh)"
     '';
   };
 
@@ -94,17 +93,17 @@
   # ── Git
   programs.git = {
     enable = true;
-    settings = {
-      user.name = "wahyudibo";
-      user.email = "wahyudi.ibo.wibowo@gmail.com";
+    userName = "wahyudibo";
+    userEmail = "wahyudi.ibo.wibowo@gmail.com";
+    
+    extraConfig = {
+      gpg.format = "openpgp";
     };
-    signing.format = "openpgp";
-  };
+  };  
 
   # ── SSH
   programs.ssh = {
     enable = true;
-    enableDefaultConfig = false;
 
     matchBlocks = {
       "*" = {
@@ -165,7 +164,7 @@
     defaultEditor = true;
 
     # Use Lua config
-    initLua = ''
+    extraLuaConfig = ''
       require("core.options")
       require("core.keymaps")
       require("core.plugins")
