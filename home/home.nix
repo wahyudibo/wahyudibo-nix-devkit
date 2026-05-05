@@ -124,7 +124,7 @@
     fzf ripgrep fd bat eza zoxide atuin direnv
 
     # Infra
-    kubectl kubectx k9s terraform
+    kubectl kubie k9s vcluster terraform
 
     # Editors & terminal
     zsh-fzf-tab zsh-completions starship tmux tmux-sessionizer just
@@ -174,6 +174,7 @@
   # ── Neovim minimal setup
   programs.neovim = {
     enable = true;
+    viAlias = true;
     vimAlias = true;
     defaultEditor = true;
 
