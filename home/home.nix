@@ -1,6 +1,11 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
+  # ── SOPS encryption for secrets management
+  imports = [
+    inputs.sops-nix.homeManagerModules.sops
+  ];
+
   home.username = "wahyudibo";
   home.homeDirectory = "/home/wahyudibo";
 
@@ -68,6 +73,46 @@
     '';
   };
 
+  # ── SOPS Configuration ──────────────────
+  sops = {
+    defaultSopsFile = ./../secrets/vault.yaml;
+    age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+    secrets = {
+      ssh_config_extra = {};
+    };
+  };
+
+  # ── SSH
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+
+    matchBlocks = {
+      "*" = {
+        forwardAgent = true;
+        serverAliveInterval = 30;
+        serverAliveCountMax = 3;
+      };
+    };
+
+    extraConfig = ''
+      Include ${config.sops.secrets.ssh_config_extra.path}
+    '';
+  };
+
+  # ── Git
+  programs.git = {
+    enable = true;
+    settings = {
+      user = {
+        name = "wahyudibo";
+        email = "wahyudi.ibo.wibowo@gmail.com";
+      };
+
+      gpg.format = "openpgp";
+    };
+  };
+
   # ── Starship prompt
   programs.starship.enable = true;
   xdg.configFile."starship.toml".source = ./../dotfiles/starship.toml;
@@ -93,31 +138,6 @@
   # -- Mise
   xdg.configFile."mise/config.toml".source = ./../dotfiles/mise.toml;
 
-  # ── Git
-  programs.git = {
-    enable = true;
-    settings = {
-      user = {
-        name = "wahyudibo";
-        email = "wahyudi.ibo.wibowo@gmail.com";
-      };
-
-      gpg.format = "openpgp";
-    };
-  };
-
-  # ── SSH
-  programs.ssh = {
-    enable = true;
-    enableDefaultConfig = false;
-
-    matchBlocks = {
-      "*" = {
-        forwardAgent = true;
-      };
-    };
-  };
-
   # ── Dev Packages
   home.packages = with pkgs; [
     # Core
@@ -135,8 +155,11 @@
     # Container tools
     docker docker-compose
 
-    # tools for development
+    # Development tools
     mise pre-commit
+
+    # Encryption
+    sops age
 
     # go
     go
