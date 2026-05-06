@@ -30,7 +30,7 @@
       e = "explorer.exe .";
     };
 
-    initExtra = ''
+    initContent = ''
       export PATH="$HOME/.local/bin:$PATH"
 
       # ── mise
@@ -96,10 +96,12 @@
   # ── Git
   programs.git = {
     enable = true;
-    userName = "wahyudibo";
-    userEmail = "wahyudi.ibo.wibowo@gmail.com";
+    settings = {
+      user = {
+        name = "wahyudibo";
+        email = "wahyudi.ibo.wibowo@gmail.com";
+      };
 
-    extraConfig = {
       gpg.format = "openpgp";
     };
   };
@@ -107,6 +109,7 @@
   # ── SSH
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
 
     matchBlocks = {
       "*" = {
@@ -228,5 +231,5 @@
     nix-direnv.enable = true;
   };
 
-  home.stateVersion = "23.11";
+  home.stateVersion = "25.11";
 }
