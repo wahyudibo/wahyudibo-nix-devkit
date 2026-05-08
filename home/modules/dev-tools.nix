@@ -1,9 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  # -- Mise
-  xdg.configFile."mise/config.toml".source = ./../../dotfiles/mise.toml;
-
   # ── FZF
   programs.fzf = {
     enable = true;

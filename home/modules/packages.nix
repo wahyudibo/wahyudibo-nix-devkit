@@ -4,7 +4,7 @@
   # ── Dev Packages
   home.packages = with pkgs; [
     # Core
-    git curl wget
+    git curl wget zip
 
     # CLI Tools
     fzf ripgrep fd bat eza zoxide atuin direnv
