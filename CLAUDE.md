@@ -42,7 +42,7 @@ Each file owns one concern and is imported by `home.nix`:
 | `dotfiles/atuin.toml` | `xdg.configFile` symlink | No |
 | `dotfiles/tms.toml` | `xdg.configFile` symlink | No |
 | `dotfiles/nvim/` (Lua files) | `xdg.configFile` symlink | No |
-| `dotfiles/tmux/tmux.conf` | `builtins.readFile` (inlined) | **Yes** |
+| `dotfiles/tmux/tmux.conf` | `xdg.configFile` symlink | No — reload with `tmux source-file ~/.config/tmux/tmux.conf` |
 | Any `home/modules/*.nix` | nix evaluation | **Yes** |
 | `nvim.nix` extraPackages (LSPs) | nix evaluation | **Yes** |
 
@@ -53,7 +53,7 @@ Lua config lives in `dotfiles/nvim/lua/core/` (options, keymaps, plugins). The e
 ### Dotfiles (`dotfiles/`)
 
 - `starship.toml` — use Nerd Font PUA symbols (e.g. ``), not wide emoji; `add_newline = false` (blank line is printed via `precmd_functions` in shell.nix instead, to keep ZLE height calculation correct for multi-line paste)
-- `tmux/tmux.conf` — prefix is `Ctrl+A`; `focus-events on` and `escape-time 0`; plugins are declared in `tmux.nix`, not here
+- `tmux/tmux.conf` — symlinked as `tmux.user.conf`; prefix is `Ctrl+A`; `focus-events on` and `escape-time 0`; plugins are declared in `tmux.nix`, not here
 - `atuin.toml` — `[tmux] enabled = false` (tmux popup mode bypasses ZLE; inline mode is required)
 
 ### Secrets (`secrets/`)
