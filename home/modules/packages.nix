@@ -7,7 +7,7 @@
     git curl wget zip
 
     # CLI Tools
-    fzf ripgrep fd bat eza zoxide atuin direnv
+    fzf ripgrep fd bat eza zoxide atuin direnv jq
 
     # Infra
     sshs kubectl kubie k9s vcluster terraform
