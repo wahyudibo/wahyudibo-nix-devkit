@@ -26,6 +26,14 @@
     };
 
     initContent = ''
+      # Disable XON/XOFF flow control so Ctrl+S never hard-freezes the terminal
+      setopt NO_FLOW_CONTROL
+
+      # Reduce escape-sequence timeout from 400ms to 100ms.
+      # Prevents ZLE from appearing frozen while waiting to decide if a lone ESC
+      # (e.g. from tmux focus-events) is the start of a longer sequence.
+      KEYTIMEOUT=10
+
       export PATH="$HOME/.local/bin:$PATH"
 
       # ── mise
@@ -34,8 +42,10 @@
         eval "$(mise activate zsh)"
       fi
 
-      # ── zoxide
-      eval "$(zoxide init zsh)"
+      # Print a blank line before each prompt via precmd so the newline is
+      # outside $PROMPT — keeps ZLE's height calculation correct for multi-line pastes
+      _blank_line_precmd() { print }
+      precmd_functions+=(_blank_line_precmd)
 
       # ── tmux autostart
       if command -v tmux >/dev/null 2>&1 && [ -z "$TMUX" ] && [ -n "$PS1" ]; then
@@ -49,17 +59,19 @@
       export FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border --preview='fzf-preview.sh {}'"
       export FZF_TMUX_OPTS="-p 80%,60%"
 
+      # ── tmux focus-events: bind \e[I so ZLE handles it cleanly instead of
+      # waiting KEYTIMEOUT ms for a sequence that never completes
+      zle -N _noop_widget
+      _noop_widget() {}
+      bindkey '\e[I' _noop_widget   # focus-in  (\e[I)
+      bindkey '\e[O' _noop_widget   # focus-out (\e[O — distinct from SS3 \eO)
+
       # ── fzf-tab
       source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
 
-      # Optional: Disable default preview for fzf-tab to keep it light
       zstyle ':fzf-tab:*' fzf-command fzf
-
       zstyle ':fzf-tab:*' switch-group '<' '>'
       zstyle ':fzf-tab:*' fzf-flags --preview-window=hidden:wrap
-
-      # ── starship
-      eval "$(starship init zsh)"
     '';
   };
 

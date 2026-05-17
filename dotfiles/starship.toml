@@ -1,4 +1,4 @@
-add_newline = true
+add_newline = false
 command_timeout = 1000
 
 format = """
@@ -13,28 +13,28 @@ fish_style_pwd_dir_length = 1
 style = "bold #89b4fa"
 
 [git_branch]
-symbol = "🌱 "
+symbol = " "
 style = "bold purple"
 
 [git_status]
 style = "bold red"
 
 [golang]
-symbol = "🐹 "
+symbol = " "
 
 [nodejs]
-symbol = "⬢ "
+symbol = " "
 
 [python]
-symbol = "🐍 "
+symbol = " "
 
 [kubernetes]
-symbol = "☸️ "
+symbol = "⎈ "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "🕒 [$time]($style)"
+format = " [$time]($style)"
 
 [character]
 success_symbol = "[➜](bold green)"

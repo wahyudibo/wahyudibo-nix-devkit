@@ -27,9 +27,7 @@ records = true
 scroll_exits = false
 
 [tmux]
-enabled = true
-width = "90%"
-height = "80%"
+enabled = false
 
 [ui]
 columns = ["duration", "time", "command"]

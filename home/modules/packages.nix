@@ -4,16 +4,16 @@
   # ── Dev Packages
   home.packages = with pkgs; [
     # Core
-    git curl wget zip
+    curl wget zip
 
     # CLI Tools
-    fzf ripgrep fd bat eza zoxide atuin direnv jq
+    ripgrep fd bat eza jq
 
     # Infra
     sshs kubectl kubie k9s vcluster terraform
 
     # Editors & terminal
-    zsh-fzf-tab zsh-completions starship tmux tmux-sessionizer just
+    zsh-fzf-tab zsh-completions tmux-sessionizer just
 
     # Container tools
     docker docker-compose
