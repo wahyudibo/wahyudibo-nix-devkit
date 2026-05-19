@@ -20,6 +20,7 @@ The neovim configuration lives in `dotfiles/nvim/` and is symlinked into `~/.con
 5. Add catppuccin-mocha colorscheme
 6. Fix deprecated `vim.loop` → `vim.uv`
 7. Expand treesitter parser list
+8. Restore terraform LSP support (terraform-ls + terraformls config)
 
 ---
 
@@ -90,9 +91,9 @@ Added at the bottom of `init.lua`, after all three `require(...)` calls. The col
 
 ## Section 4 — LSP (`plugins/lsp.lua`)
 
-### Removals
+### Terraform restored
 
-- `terraformls` configuration — `terraform-ls` binary was removed from `nvim.nix` extraPackages in commit 62977f0
+`terraform-ls` is added back to `nvim.nix` extraPackages and `terraformls` configuration is kept in `plugins/lsp.lua`. This requires `just apply` (nix rebuild). The `terraform` and `hcl` parsers are also added to treesitter `ensure_installed`.
 
 ### Additions
 
@@ -155,6 +156,8 @@ Add to `ensure_installed`:
 - `toml`
 - `markdown`
 - `dockerfile`
+- `terraform` (restored with terraform LSP)
+- `hcl` (HCL syntax used by terraform)
 
 ---
 
@@ -190,19 +193,20 @@ Individual key descs (not groups):
 | `dotfiles/nvim/lua/core/options.lua` | Add 8 options |
 | `dotfiles/nvim/lua/core/keymaps.lua` | Remove nvim-tree keymap, remap quickfix, add window nav, add silent=true |
 | `dotfiles/nvim/lua/core/plugins.lua` | Fix harpoon/oil/which-key configs, add catppuccin, add opts to gitsigns/lualine/Comment, remove nvim-tree, fix vim.uv |
-| `dotfiles/nvim/lua/plugins/lsp.lua` | Remove terraformls, add LspAttach keymaps |
+| `dotfiles/nvim/lua/plugins/lsp.lua` | Restore terraformls, add LspAttach keymaps |
+| `home/modules/nvim.nix` | Add terraform-ls back to extraPackages (**requires `just apply`**) |
 | `dotfiles/nvim/lua/plugins/harpoon.lua` | Add setup(), remap jump keys |
 | `dotfiles/nvim/lua/plugins/cmp.lua` | Add Tab/S-Tab/C-e |
 | `dotfiles/nvim/lua/plugins/treesitter.lua` | Add parsers |
 | `dotfiles/nvim/lua/plugins/which-key.lua` | Expand groups |
 
-No nix rebuild required — all changes are in Lua dotfiles symlinked live.
+**One nix rebuild required:** `home/modules/nvim.nix` adds `terraform-ls` back to extraPackages. Run `just apply` after that change. All other changes are in Lua dotfiles symlinked live and take effect immediately.
 
 ---
 
 ## Out of Scope
 
-- Adding new LSP servers (requires `nvim.nix` change + `just apply`)
+- Adding additional LSP servers beyond the restored set (requires `nvim.nix` change + `just apply`)
 - Formatter integration with null-ls / conform.nvim
 - DAP / debugging setup
 - Snippets beyond LuaSnip passthrough
