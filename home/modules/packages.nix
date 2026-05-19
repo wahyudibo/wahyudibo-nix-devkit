@@ -9,9 +9,6 @@
     # CLI Tools
     ripgrep fd bat eza jq
 
-    # Infra
-    sshs kubectl kubie k9s vcluster terraform
-
     # Editors & terminal
     zsh-fzf-tab zsh-completions tmux-sessionizer just
 
@@ -19,7 +16,7 @@
     docker docker-compose
 
     # Development tools
-    mise pre-commit
+    mise
 
     # Encryption
     sops age
@@ -29,9 +26,6 @@
     gopls
     golangci-lint
     gotools
-
-    # js
-    biome
 
     # rust
     rust-analyzer

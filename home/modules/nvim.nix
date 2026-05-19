@@ -22,7 +22,6 @@
     extraPackages = with pkgs; [
       # LSP
       gopls
-      terraform-ls
       yaml-language-server
       lua-language-server
 

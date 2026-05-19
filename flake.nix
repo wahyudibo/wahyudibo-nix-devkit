@@ -13,15 +13,7 @@
   outputs = { self, nixpkgs, home-manager, sops-nix, ... }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-        config = {
-          allowUnfreePredicate = pkg:
-            builtins.elem (pkgs.lib.getName pkg) [
-              "terraform"
-            ];
-        };
-      };
+      pkgs = import nixpkgs { inherit system; };
     in
     {
       homeConfigurations = {
