@@ -34,26 +34,49 @@ Each file owns one concern and is imported by `home.nix`:
 
 ### What requires a rebuild vs. takes effect immediately
 
-`xdg.configFile` entries use `source =` which creates a symlink — edits to the source file are live. `programs.tmux.extraConfig` uses `builtins.readFile` which bakes the content into the nix store at build time.
+`xdg.configFile` entries use `source =` which creates a symlink — edits to the source file are live. `home/modules/*.nix` changes require a rebuild.
 
 | File | Mechanism | Rebuild needed? |
 |---|---|---|
 | `dotfiles/starship.toml` | `xdg.configFile` symlink | No |
 | `dotfiles/atuin.toml` | `xdg.configFile` symlink | No |
 | `dotfiles/tms.toml` | `xdg.configFile` symlink | No |
-| `dotfiles/nvim/` (Lua files) | `xdg.configFile` symlink | No |
-| `dotfiles/tmux/tmux.conf` | `xdg.configFile` symlink | No — reload with `tmux source-file ~/.config/tmux/tmux.conf` |
+| `dotfiles/nvim/` (Lua files) | `mkOutOfStoreSymlink` → live dir | No — changes are immediate |
+| `dotfiles/tmux/tmux.conf` | `xdg.configFile` symlink | No — reload with `prefix+r` (`Ctrl+A r`) |
 | Any `home/modules/*.nix` | nix evaluation | **Yes** |
 | `nvim.nix` extraPackages (LSPs) | nix evaluation | **Yes** |
+| `tmux.nix` plugins / extraConfig | nix evaluation | **Yes** |
 
 ### Neovim
 
-Lua config lives in `dotfiles/nvim/lua/core/` (options, keymaps, plugins). The entry point is `nvim.nix` `extraLuaConfig` which loads those three modules. **LSPs and formatters are installed by nix** in `nvim.nix` `extraPackages` (gopls, terraform-ls, yaml-language-server, lua-language-server, stylua, gofumpt, etc.) — there is no Mason. Adding a new LSP or formatter means adding it to `extraPackages` and running `just apply`.
+Lua config lives in `dotfiles/nvim/lua/` and is split across `core/` (options, keymaps, plugins bootstrap) and `plugins/` (one file per plugin). The entry point is `dotfiles/nvim/init.lua` which loads `core.options`, `core.keymaps`, and `core.plugins` (lazy.nvim). `~/.config/nvim` is a `mkOutOfStoreSymlink` pointing directly to `dotfiles/nvim/` — new Lua files are immediately visible without `git add` or `just apply`.
+
+**LSPs and formatters are installed by nix** in `nvim.nix` `extraPackages` (gopls, terraform-ls, yaml-language-server, lua-language-server, stylua, gofumpt, etc.) — there is no Mason. Adding a new LSP or formatter means adding it to `extraPackages` and running `just apply`. LSPs are enabled via `vim.lsp.enable({...})` in `plugins/lsp.lua` (Neovim 0.11+ API — do not use the old `require('lspconfig').server.setup()` pattern).
+
+Plugins are managed by lazy.nvim (bootstrapped in `core/plugins.lua`). Plugin options that must be read at plugin load time (e.g. `@continuum-restore`) must be set **before** their `run-shell` fires — use the plugin's `extraConfig` in `tmux.nix`, not the user conf.
+
+### Tmux
+
+Plugins are declared in `tmux.nix` (no TPM). The generated `~/.config/tmux/tmux.conf` is nix-managed and read-only; user settings live in `dotfiles/tmux/tmux.conf` which is symlinked as `~/.config/tmux/tmux.user.conf` and sourced at the end of the generated config.
+
+**Critical constraint — plugin option ordering:** Some tmux plugin options must be set **before** that plugin's `run-shell` fires (they are read at load time). These must live in the plugin's `extraConfig` block inside `tmux.nix`, not in `tmux.conf`. Options read at save/restore time (e.g. `@resurrect-strategy-nvim`) are safe to put in `tmux.conf`.
+
+| Option | Where it must live | Why |
+|---|---|---|
+| `@continuum-restore 'on'` | `tmux.nix` plugin extraConfig | Read by continuum at startup |
+| `@continuum-save-interval` | `tmux.nix` plugin extraConfig | Read by continuum at startup |
+| `@yank_selection 'clipboard'` | `tmux.nix` plugin extraConfig | Read by yank when setting up bindings |
+| `@resurrect-strategy-nvim` | `tmux.conf` is fine | Read at save/restore time |
+| `@resurrect-capture-pane-contents` | `tmux.conf` is fine | Read at save/restore time |
+
+Plugin load order matters: `resurrect` must load before `continuum` (dependency). Current order: `resurrect → continuum → yank`.
+
+Reload user config without rebuilding: `prefix+r` (`Ctrl+A r`) — sources `tmux.user.conf` only.
 
 ### Dotfiles (`dotfiles/`)
 
 - `starship.toml` — use Nerd Font PUA symbols (e.g. ``), not wide emoji; `add_newline = false` (blank line is printed via `precmd_functions` in shell.nix instead, to keep ZLE height calculation correct for multi-line paste)
-- `tmux/tmux.conf` — symlinked as `tmux.user.conf`; prefix is `Ctrl+A`; `focus-events on` and `escape-time 0`; plugins are declared in `tmux.nix`, not here
+- `tmux/tmux.conf` — symlinked as `tmux.user.conf`; prefix is `Ctrl+A`; `focus-events on` and `escape-time 0`; plugin load-time options belong in `tmux.nix` extraConfig, not here
 - `atuin.toml` — `[tmux] enabled = false` (tmux popup mode bypasses ZLE; inline mode is required)
 
 ### Secrets (`secrets/`)
