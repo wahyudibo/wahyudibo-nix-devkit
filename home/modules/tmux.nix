@@ -5,15 +5,25 @@
   programs.tmux = {
     enable = true;
 
-    # Source the symlinked user config so edits take effect without a rebuild
-    extraConfig = "source-file ${config.xdg.configHome}/tmux/tmux.user.conf";
-
-    # Nix-managed plugins (no TPM)
+    # Inject settings directly where the plugins are defined
     plugins = with pkgs.tmuxPlugins; [
       resurrect
-      continuum
-      yank
+      {
+        plugin = continuum;
+        extraConfig = ''
+          set -g @continuum-restore 'on'
+          set -g @continuum-save-interval '15'
+        '';
+      }
+      {
+        plugin = yank;
+        extraConfig = ''
+          set -g @yank_selection 'clipboard'
+        '';
+      }
     ];
+
+    extraConfig = "source-file ${config.xdg.configHome}/tmux/tmux.user.conf";
   };
 
   xdg.configFile."tmux/tmux.user.conf".source = ./../../dotfiles/tmux/tmux.conf;
