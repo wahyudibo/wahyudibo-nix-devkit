@@ -14,7 +14,6 @@
     # Essential runtime deps
     extraPackages = with pkgs; [
       # LSP
-      gopls
       yaml-language-server
       lua-language-server
 
@@ -31,7 +30,6 @@
 
       # Go specifics
       gotools
-      golangci-lint
     ];
   };
   xdg.configFile."nvim".source =
