@@ -1,15 +1,6 @@
-local lspconfig = require("lspconfig")
-
--- Go
-lspconfig.gopls.setup {}
-
--- Terraform
-lspconfig.terraformls.setup {
+-- terraformls binary is 'terraform-ls serve', not the default
+vim.lsp.config("terraformls", {
   cmd = { "terraform-ls", "serve" },
-}
+})
 
--- YAML (Kubernetes)
-lspconfig.yamlls.setup {}
-
--- Lua (for config)
-lspconfig.lua_ls.setup {}
+vim.lsp.enable({ "gopls", "terraformls", "yamlls", "lua_ls" })

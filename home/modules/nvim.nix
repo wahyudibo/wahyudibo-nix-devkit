@@ -8,13 +8,6 @@
     vimAlias = true;
     defaultEditor = true;
 
-    # Use Lua config
-    extraLuaConfig = ''
-      require("core.options")
-      require("core.keymaps")
-      require("core.plugins")
-    '';
-
     withPython3 = false;
     withRuby = false;
 
@@ -41,5 +34,6 @@
       golangci-lint
     ];
   };
-  xdg.configFile."nvim".source = ./../../dotfiles/nvim;
+  xdg.configFile."nvim".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/devkit/dotfiles/nvim";
 }
