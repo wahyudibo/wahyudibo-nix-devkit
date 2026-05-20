@@ -3,6 +3,13 @@
 {
   # ── Dev Packages
   home.packages = with pkgs; [
+    # Unix tools
+    unixtools.netstat
+    unixtools.route
+    unixtools.col
+    unixtools.column
+    unixtools.xxd
+
     # Core
     curl wget zip
 
