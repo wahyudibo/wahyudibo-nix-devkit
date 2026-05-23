@@ -66,6 +66,7 @@ Plugins are declared in `tmux.nix` (no TPM). The generated `~/.config/tmux/tmux.
 | `@continuum-restore 'on'` | `tmux.nix` plugin extraConfig | Read by continuum at startup |
 | `@continuum-save-interval` | `tmux.nix` plugin extraConfig | Read by continuum at startup |
 | `@yank_selection 'clipboard'` | `tmux.nix` plugin extraConfig | Read by yank when setting up bindings |
+| `status-right` | `tmux.nix` resurrect extraConfig | continuum prepends `#(continuum_save.sh)` to it at load time; any `set -g status-right` in `tmux.conf` (sourced last) would overwrite the injected hook and break auto-save |
 | `@resurrect-strategy-nvim` | `tmux.conf` is fine | Read at save/restore time |
 | `@resurrect-capture-pane-contents` | `tmux.conf` is fine | Read at save/restore time |
 
