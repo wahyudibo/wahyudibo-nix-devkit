@@ -26,6 +26,16 @@
     };
 
     initContent = ''
+      # Force emacs keymap so that a lone ESC is treated as a Meta prefix
+      # (Alt-equivalent) rather than activating vi-cmd-mode.
+      # Without this, ZSH's default main-keymap binds ^[ to vi-cmd-mode, which
+      # makes the Starship prompt flip from ➜ to ❮ (looks like <) and turns all
+      # keystrokes into Vim normal-mode commands.  Triggers include:
+      #   • Ctrl+[ (= ESC on every terminal)
+      #   • ESC leaking from dismissed tmux display-popup / tms switch popup
+      # Must come before any other bindkey calls so it sets the base keymap.
+      bindkey -e
+
       # Disable XON/XOFF flow control so Ctrl+S never hard-freezes the terminal
       setopt NO_FLOW_CONTROL
 
