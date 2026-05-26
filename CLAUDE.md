@@ -34,15 +34,15 @@ Each file owns one concern and is imported by `home.nix`:
 
 ### What requires a rebuild vs. takes effect immediately
 
-`xdg.configFile` entries use `source =` which creates a symlink — edits to the source file are live. `home/modules/*.nix` changes require a rebuild.
+`xdg.configFile` entries with `source =` copy the file into the **nix store** and symlink there — edits to the dotfiles source are **not** live; a rebuild is needed. Only `mkOutOfStoreSymlink` creates a direct symlink to the source file. `home/modules/*.nix` changes always require a rebuild.
 
 | File | Mechanism | Rebuild needed? |
 |---|---|---|
-| `dotfiles/starship.toml` | `xdg.configFile` symlink | No |
-| `dotfiles/atuin.toml` | `xdg.configFile` symlink | No |
-| `dotfiles/tms.toml` | `xdg.configFile` symlink | No |
+| `dotfiles/starship.toml` | `xdg.configFile` → nix store copy | **Yes** |
+| `dotfiles/atuin.toml` | `xdg.configFile` → nix store copy | **Yes** |
+| `dotfiles/tms.toml` | `xdg.configFile` → nix store copy | **Yes** |
 | `dotfiles/nvim/` (Lua files) | `mkOutOfStoreSymlink` → live dir | No — changes are immediate |
-| `dotfiles/tmux/tmux.conf` | `xdg.configFile` symlink | No — reload with `prefix+r` (`Ctrl+A r`) |
+| `dotfiles/tmux/tmux.conf` | `xdg.configFile` → nix store copy | **Yes** — after `just apply`, reload with `prefix+r` (`Ctrl+A r`) |
 | Any `home/modules/*.nix` | nix evaluation | **Yes** |
 | `nvim.nix` extraPackages (LSPs) | nix evaluation | **Yes** |
 | `tmux.nix` plugins / extraConfig | nix evaluation | **Yes** |
