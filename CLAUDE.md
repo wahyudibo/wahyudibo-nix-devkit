@@ -53,31 +53,27 @@ Lua config lives in `dotfiles/nvim/lua/` and is split across `core/` (options, k
 
 **LSPs and formatters are installed by nix** in `nvim.nix` `extraPackages` (gopls, terraform-ls, yaml-language-server, lua-language-server, stylua, gofumpt, etc.) — there is no Mason. Adding a new LSP or formatter means adding it to `extraPackages` and running `just apply`. LSPs are enabled via `vim.lsp.enable({...})` in `plugins/lsp.lua` (Neovim 0.11+ API — do not use the old `require('lspconfig').server.setup()` pattern).
 
-Plugins are managed by lazy.nvim (bootstrapped in `core/plugins.lua`). Plugin options that must be read at plugin load time (e.g. `@continuum-restore`) must be set **before** their `run-shell` fires — use the plugin's `extraConfig` in `tmux.nix`, not the user conf.
+Plugins are managed by lazy.nvim (bootstrapped in `core/plugins.lua`). Plugin options that must be read at plugin load time must be set **before** their `run-shell` fires — use the plugin's `extraConfig` in `tmux.nix`, not the user conf.
 
 ### Tmux
 
 Plugins are declared in `tmux.nix` (no TPM). The generated `~/.config/tmux/tmux.conf` is nix-managed and read-only; user settings live in `dotfiles/tmux/tmux.conf` which is symlinked as `~/.config/tmux/tmux.user.conf` and sourced at the end of the generated config.
 
-**Critical constraint — plugin option ordering:** Some tmux plugin options must be set **before** that plugin's `run-shell` fires (they are read at load time). These must live in the plugin's `extraConfig` block inside `tmux.nix`, not in `tmux.conf`. Options read at save/restore time (e.g. `@resurrect-strategy-nvim`) are safe to put in `tmux.conf`.
+Active plugins: `yank` only. Resurrect and continuum were removed — they conflict with WSL2 sleep/wake cycles and caused windows to restore at index 0 despite `base-index 1`.
+
+`base-index 1` and `pane-base-index 1` are set via `programs.tmux.baseIndex = 1` in `tmux.nix` (top of generated config) so they can never be overridden by restore order. `status-right` is set in `programs.tmux.extraConfig` (before `source-file tmux.user.conf`).
 
 | Option | Where it must live | Why |
 |---|---|---|
-| `@continuum-restore 'on'` | `tmux.nix` plugin extraConfig | Read by continuum at startup |
-| `@continuum-save-interval` | `tmux.nix` plugin extraConfig | Read by continuum at startup |
 | `@yank_selection 'clipboard'` | `tmux.nix` plugin extraConfig | Read by yank when setting up bindings |
-| `status-right` | `tmux.nix` resurrect extraConfig | continuum prepends `#(continuum_save.sh)` to it at load time; any `set -g status-right` in `tmux.conf` (sourced last) would overwrite the injected hook and break auto-save |
-| `@resurrect-strategy-nvim` | `tmux.conf` is fine | Read at save/restore time |
-| `@resurrect-capture-pane-contents` | `tmux.conf` is fine | Read at save/restore time |
-
-Plugin load order matters: `resurrect` must load before `continuum` (dependency). Current order: `resurrect → continuum → yank`.
+| `status-right` | `tmux.nix` extraConfig | Must not be overridden by user.conf |
 
 Reload user config without rebuilding: `prefix+r` (`Ctrl+A r`) — sources `tmux.user.conf` only.
 
 ### Dotfiles (`dotfiles/`)
 
 - `starship.toml` — use Nerd Font PUA symbols (e.g. ``), not wide emoji; `add_newline = false` (blank line is printed via `precmd_functions` in shell.nix instead, to keep ZLE height calculation correct for multi-line paste)
-- `tmux/tmux.conf` — symlinked as `tmux.user.conf`; prefix is `Ctrl+A`; `focus-events on` and `escape-time 0`; plugin load-time options belong in `tmux.nix` extraConfig, not here
+- `tmux/tmux.conf` — symlinked as `tmux.user.conf`; prefix is `Ctrl+A`; `focus-events on` and `escape-time 0`; plugin load-time options and `status-right` belong in `tmux.nix` extraConfig, not here
 - `atuin.toml` — `[tmux] enabled = false` (tmux popup mode bypasses ZLE; inline mode is required)
 
 ### Secrets (`secrets/`)
