@@ -20,7 +20,7 @@
     zsh-fzf-tab zsh-completions tmux-sessionizer just
 
     # Container tools
-    docker docker-compose
+    docker_29 docker-compose
 
     # Development tools
     mise
