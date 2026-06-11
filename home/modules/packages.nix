@@ -26,7 +26,7 @@
     mise
 
     # Encryption
-    sops age
+    sops age gnupg pinentry-curses
 
     # go
     go

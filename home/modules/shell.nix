@@ -45,6 +45,7 @@
       KEYTIMEOUT=10
 
       export PATH="$HOME/.local/bin:$PATH"
+      export GPG_TTY=$(tty)
 
       # ── mise
       export PATH="$HOME/.mise/bin:$PATH"
