@@ -47,6 +47,7 @@
 
       export PATH="$HOME/.local/bin:$PATH"
       export GPG_TTY=$(tty)
+      export GITHUB_PERSONAL_ACCESS_TOKEN="$(cat ${config.sops.secrets.github_token.path})"
 
       # ── mise
       export PATH="$HOME/.mise/bin:$PATH"
