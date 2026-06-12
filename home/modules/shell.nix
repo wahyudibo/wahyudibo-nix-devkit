@@ -23,6 +23,7 @@
       find = "fd";
       c = "code .";
       e = "explorer.exe .";
+      gpg-unlock = "echo 'unlock' | gpg --clearsign > /dev/null && echo 'GPG passphrase cached (1 week TTL)'";
     };
 
     initContent = ''
