@@ -40,5 +40,8 @@
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
+    stdlib = ''
+      source_up_if_exists
+    '';
   };
 }
