@@ -1,18 +1,37 @@
 tap "hashicorp/tap"
-tap "syncdk/aws-session-manager-plugin"
+tap "systemmanic/aws-session-manager-plugin", "https://github.com/Systemmanic/homebrew-aws-session-manager-plugin.git"
+# Universal Command-Line Interface for Alibaba Cloud
 brew "aliyun-cli"
+# Automate deployment, configuration, and upgrading
+brew "ansible"
+# GitOps Continuous Delivery for Kubernetes
 brew "argocd"
+# Official Amazon AWS command-line interface
 brew "awscli"
+# Cloudflare Tunnel client (formerly Argo Tunnel)
 brew "cloudflared"
+# Dependency Manager for PHP
+brew "composer"
+# GNU compiler collection
 brew "gcc"
+# Graph visualization software from AT&T and Bell Labs
+brew "graphviz"
+# Kubernetes CLI To Manage Your Clusters In Style!
 brew "k9s"
+# Kubernetes command-line interface
 brew "kubernetes-cli"
+# Much more powerful alternative to kubectx and kubens
 brew "kubie"
+# Framework for managing multi-language pre-commit hooks
 brew "pre-commit"
+# CLI proxy to minimize LLM token consumption
+brew "rtk"
+# Graphical command-line client for SSH
 brew "sshs"
+# Linter for Terraform files
 brew "tflint"
+# Creates fully functional virtual k8s cluster inside host k8s cluster's namespace
 brew "vcluster"
-brew "hashicorp/tap/terraform"
 vscode "albymor.increment-selection"
 vscode "alefragnani.project-manager"
 vscode "anthropic.claude-code"
@@ -70,6 +89,7 @@ go "github.com/josharian/impl"
 winget "CPUID.HWMonitor"
 winget "DBeaver.DBeaver.Community"
 winget "Docker.DockerDesktop"
+winget "Git.Git"
 winget "Google.Chrome.EXE"
 winget "Google.GoogleDrive"
 winget "Guru3D.RTSS"
@@ -90,5 +110,6 @@ winget "XP89DCGQ3K6VLD", source: "msstore"
 winget "XP8CBJ40XLBWKX", source: "msstore"
 winget "XP9KHM4BK9FZ7Q", source: "msstore"
 npm "@continuedev/cli"
+npm "@mermaid-js/mermaid-cli"
 npm "corepack"
 npm "omniroute"
