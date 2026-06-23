@@ -25,6 +25,7 @@ records = true
 
 [keys]
 scroll_exits = false
+prefix = "x"
 
 [tmux]
 enabled = false
