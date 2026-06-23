@@ -26,6 +26,7 @@
     secrets = {
       ssh_config_extra = {};
       github_token = {};
+      context7_api_key = {};
     };
   };
 }

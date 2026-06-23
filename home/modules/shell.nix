@@ -48,6 +48,7 @@
       export PATH="$HOME/.local/bin:$PATH"
       export GPG_TTY=$(tty)
       export GITHUB_PERSONAL_ACCESS_TOKEN="$(cat ${config.sops.secrets.github_token.path})"
+      export CONTEXT7_API_KEY="$(cat ${config.sops.secrets.context7_api_key.path})"
 
       # ── mise
       export PATH="$HOME/.mise/bin:$PATH"
