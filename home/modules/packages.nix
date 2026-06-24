@@ -28,6 +28,9 @@
     # Encryption
     sops age gnupg pinentry-curses
 
+    # Headless browsers
+    chromium
+
     # go
     go
     gopls
