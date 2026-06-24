@@ -41,7 +41,23 @@
     enable = true;
     nix-direnv.enable = true;
     stdlib = ''
-      source_up_if_exists
+      _load_parent_envrc() {
+        local dir="$PWD"
+        local -a parents=()
+
+        while true; do
+          dir="''${dir%/*}"
+          [[ -z "$dir" || "$dir" == "/" || "$dir" == "$HOME" ]] && break
+          [[ -f "$dir/.envrc" ]] && parents=("$dir/.envrc" "''${parents[@]}")
+        done
+
+        for f in "''${parents[@]}"; do
+          source_env "$f"
+        done
+      }
+
+      _load_parent_envrc
+      unset -f _load_parent_envrc
     '';
   };
 }
