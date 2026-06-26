@@ -28,6 +28,9 @@
     # Encryption
     sops age gnupg pinentry-curses
 
+    # Fonts
+    noto-fonts-color-emoji
+
     # Headless browsers
     chromium
 
