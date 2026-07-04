@@ -132,12 +132,17 @@ just rebuild    # full rebuild
 .
 ├── flake.nix
 ├── home/
-│   └── home.nix
-├── config/
+│   ├── home.nix
+│   └── modules/
+│       ├── sops.nix
+│       └── ...
+├── dotfiles/
 │   ├── nvim/
 │   ├── starship.toml
 │   ├── atuin.toml
 │   └── ...
+├── secrets/
+│   └── vault.yaml
 ├── bootstrap.sh
 ├── justfile
 └── .envrc
@@ -176,7 +181,7 @@ sops secrets/vault.yaml
 ```
 
 ### 3. Adding New Secret Types
-To add a new secret to your build, register it in `home/home.nix`
+To add a new secret to your build, register it in `home/modules/sops.nix`
 
 ```nix
 sops.secrets.my_new_secret = {};

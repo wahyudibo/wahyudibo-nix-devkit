@@ -29,6 +29,7 @@ Each file owns one concern and is imported by `home.nix`:
 | `git.nix` | git identity and settings |
 | `ssh.nix` | SSH client config; injects the sops-decrypted `ssh_config_extra` |
 | `nvim.nix` | neovim binary, LSPs, formatters, and Lua config symlink |
+| `sops.nix` | sops-nix import + secret declarations (`sops.defaultSopsFile`, `sops.secrets`) |
 
 **Rule**: if a tool has a home-manager `programs.<name>` module, use it — don't also list it in `packages.nix`. The `programs.*` module installs the binary AND handles shell integration.
 
@@ -84,7 +85,7 @@ Managed by **sops-nix** with age encryption derived from `~/.ssh/id_ed25519`. Ed
 sops secrets/vault.yaml
 ```
 
-To add a new secret: declare it in `home/home.nix` under `sops.secrets`, then reference `config.sops.secrets.<name>.path` in the relevant module.
+To add a new secret: declare it in `home/modules/sops.nix` under `sops.secrets`, then reference `config.sops.secrets.<name>.path` in the relevant module.
 
 ### WSL files (`wsl/`)
 
