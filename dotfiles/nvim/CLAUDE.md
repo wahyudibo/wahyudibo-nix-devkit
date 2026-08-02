@@ -1,0 +1,5 @@
+Lua config lives in `dotfiles/nvim/lua/` and is split across `core/` (options, keymaps, plugins bootstrap) and `plugins/` (one file per plugin). The entry point is `dotfiles/nvim/init.lua` which loads `core.options`, `core.keymaps`, and `core.plugins` (lazy.nvim). `~/.config/nvim` is a `mkOutOfStoreSymlink` pointing directly to `dotfiles/nvim/` — new Lua files are immediately visible without `git add` or `just apply`.
+
+**LSPs and formatters are installed by nix** in `nvim.nix` `extraPackages` (gopls, terraform-ls, yaml-language-server, lua-language-server, stylua, gofumpt, etc.) — there is no Mason. Adding a new LSP or formatter means adding it to `extraPackages` and running `just apply`. LSPs are enabled via `vim.lsp.enable({...})` in `plugins/lsp.lua` (Neovim 0.11+ API — do not use the old `require('lspconfig').server.setup()` pattern).
+
+Plugins are managed by lazy.nvim (bootstrapped in `core/plugins.lua`). Plugin options that must be read at plugin load time must be set **before** their `run-shell` fires — use the plugin's `extraConfig` in `tmux.nix`, not the user conf.

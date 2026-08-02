@@ -2,19 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Commands
-
-```bash
-just apply      # build and activate home-manager config (runs exec zsh -l after)
-just update     # update all flake inputs (nixpkgs, home-manager, sops-nix)
-just rebuild    # update + apply in one shot
-just clean      # nix garbage collection
-just doctor     # nix diagnostics
-```
-
 ## Architecture
 
-This is a **Nix Flakes + Home Manager** configuration targeting a single user (`wahyudibo`) on WSL2 (x86_64-linux). The flake pins nixpkgs to `nixos-25.11` and home-manager to `release-25.11`. `home/home.nix` is the root import that pulls in all modules and declares SOPS secrets.
+This is a **Nix Flakes + Home Manager** configuration targeting a single user (`wahyudibo`) on WSL2 (x86_64-linux). `home/home.nix` is the root import that pulls in all modules and declares SOPS secrets.
 
 ### Module layout (`home/modules/`)
 
@@ -48,28 +38,7 @@ Each file owns one concern and is imported by `home.nix`:
 | `nvim.nix` extraPackages (LSPs) | nix evaluation | **Yes** |
 | `tmux.nix` plugins / extraConfig | nix evaluation | **Yes** |
 
-### Neovim
-
-Lua config lives in `dotfiles/nvim/lua/` and is split across `core/` (options, keymaps, plugins bootstrap) and `plugins/` (one file per plugin). The entry point is `dotfiles/nvim/init.lua` which loads `core.options`, `core.keymaps`, and `core.plugins` (lazy.nvim). `~/.config/nvim` is a `mkOutOfStoreSymlink` pointing directly to `dotfiles/nvim/` — new Lua files are immediately visible without `git add` or `just apply`.
-
-**LSPs and formatters are installed by nix** in `nvim.nix` `extraPackages` (gopls, terraform-ls, yaml-language-server, lua-language-server, stylua, gofumpt, etc.) — there is no Mason. Adding a new LSP or formatter means adding it to `extraPackages` and running `just apply`. LSPs are enabled via `vim.lsp.enable({...})` in `plugins/lsp.lua` (Neovim 0.11+ API — do not use the old `require('lspconfig').server.setup()` pattern).
-
-Plugins are managed by lazy.nvim (bootstrapped in `core/plugins.lua`). Plugin options that must be read at plugin load time must be set **before** their `run-shell` fires — use the plugin's `extraConfig` in `tmux.nix`, not the user conf.
-
-### Tmux
-
-Plugins are declared in `tmux.nix` (no TPM). The generated `~/.config/tmux/tmux.conf` is nix-managed and read-only; user settings live in `dotfiles/tmux/tmux.conf` which is symlinked as `~/.config/tmux/tmux.user.conf` and sourced at the end of the generated config.
-
-Active plugins: `yank` only. Resurrect and continuum were removed — they conflict with WSL2 sleep/wake cycles and caused windows to restore at index 0 despite `base-index 1`.
-
-`base-index 1` and `pane-base-index 1` are set via `programs.tmux.baseIndex = 1` in `tmux.nix` (top of generated config) so they can never be overridden by restore order. `status-right` is set in `programs.tmux.extraConfig` (before `source-file tmux.user.conf`).
-
-| Option | Where it must live | Why |
-|---|---|---|
-| `@yank_selection 'clipboard'` | `tmux.nix` plugin extraConfig | Read by yank when setting up bindings |
-| `status-right` | `tmux.nix` extraConfig | Must not be overridden by user.conf |
-
-Reload user config without rebuilding: `prefix+r` (`Ctrl+A r`) — sources `tmux.user.conf` only.
+Neovim-specific and Tmux-specific gotchas now live in `dotfiles/nvim/CLAUDE.md` and `dotfiles/tmux/CLAUDE.md` (loaded only when working in those dirs).
 
 ### Dotfiles (`dotfiles/`)
 
