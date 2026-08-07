@@ -12,6 +12,13 @@
         serverAliveInterval = 30;
         serverAliveCountMax = 3;
       };
+
+      "github-devopslingble" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/id_ed25519_devopslingble";
+        identitiesOnly = true;
+      };
     };
 
     extraConfig = ''
