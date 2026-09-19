@@ -75,6 +75,7 @@
       "original": {
         "owner": "Mic92",
         "repo": "sops-nix",
+        "rev": "f1406619a3884cd5c47992a70b8b35c9c0fcb4c9",
         "type": "github"
       }
     }
