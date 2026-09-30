@@ -40,7 +40,6 @@ brew "hashicorp/tap/terraform"
 brew "hashicorp/tap/vault", trusted: true
 go "cmd/go"
 go "cmd/gofmt"
-go "github.com/golangci/golangci-lint/v2/cmd/golangci-lint"
 go "golang.org/x/tools/gopls"
 go "github.com/goreleaser/goreleaser/v2"
 winget "CPUID HWMonitor 1.61", id: "CPUID.HWMonitor"

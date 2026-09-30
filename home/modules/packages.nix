@@ -37,7 +37,6 @@
     # go
     go
     gopls
-    golangci-lint
     gotools
 
     # rust
